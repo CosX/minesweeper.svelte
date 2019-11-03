@@ -1,29 +1,74 @@
 <script>
 	import Slot from './Slot.svelte';
-	import { createMinesweeperBoard, crawlOpenSlots } from './game';
+	import { 
+		createMinesweeperBoard,
+		crawlOpenSlots,
+		reveal 
+	} from './game';
 
 	export let board = createMinesweeperBoard();
+	export let gameOver = false;
+	export let suspense = false;
 
 	function slotClicked(event) {
 		const slotClicked = event.detail;
+		suspense = false;
 		if (slotClicked.isOpen && !slotClicked.isNearbyBomb && !slotClicked.isBomb){
 			board = crawlOpenSlots(board, slotClicked.ri, slotClicked.si);
 		}
+		if (slotClicked.isBomb){
+			board = reveal(board);
+			gameOver = true;
+		}
+	}
+
+	function slotDown() {
+		suspense = true;
+	}
+
+	function resetGame() {
+		board = createMinesweeperBoard();
+		gameOver = false;
 	}
 </script>
 
 <style>
+	.middle {
+		text-align: center;
+		margin-left:auto; 
+		margin-right:auto;
+	}
+
+	.emo {
+		font-size: 2em;
+	}
 </style>
 
-<table>
-	<tbody>
-	{#each board as row, ri}
-		<tr>
-			{#each row as slot, si}
-				<Slot current={slot} ri={ri} si={si} on:slotClicked="{slotClicked}" />
-			{/each}
-		</tr>
-	{/each}
-	</tbody>
+<div class="middle">
+	<h1>Sveltesweeper</h1>
+	<div class="emo">
+		{#if gameOver}
+			😵
+		{:else if suspense}
+			😮
+		{:else}
+			😊
+		{/if}
+	</div>
 	
-</table>
+
+	<table class="middle">
+		<tbody>
+		{#each board as row, ri}
+			<tr>
+				{#each row as slot, si}
+					<Slot current={slot} ri={ri} si={si} on:slotClicked="{slotClicked}" on:slotDown="{slotDown}" />
+				{/each}
+			</tr>
+		{/each}
+		</tbody>
+		
+	</table>
+
+	<button on:click={resetGame}>Reset game</button>
+ </div>

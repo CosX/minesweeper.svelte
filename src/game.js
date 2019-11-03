@@ -79,4 +79,4 @@ export const crawlOpenSlots = (board, ri, si) => {
     return board;
 }
 
-
+export const reveal = board => board.map(row => row.map(slot => { slot.isOpen = true; return slot; } ));

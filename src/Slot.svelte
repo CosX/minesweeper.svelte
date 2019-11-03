@@ -9,11 +9,20 @@
     function click() {
         current.isOpen = true;
         dispatch('slotClicked', {...current, ri, si});
-	}
+    }
 </script>
+<style>
+    td {
+        font-size: 2em;
+    }
 
+    td:hover,
+	td:focus {
+		cursor: pointer;
+	}
+</style>
 {#if !current.isOpen}
-    <td on:click={click}>
+    <td on:mouseup={click} on:mousedown={() => dispatch('slotDown')}>
         🤔
     </td>
 {:else}
