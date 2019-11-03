@@ -1,5 +1,5 @@
 export default {
-    bombs: 25,
+    bombs: 15,
     board: {
         width: 8,
         height: 10
