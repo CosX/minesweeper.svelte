@@ -6,9 +6,16 @@
     export let ri;
     export let si;
     
-    function click() {
+    const click = () => {
+        if (current.isFlagged) return;
         current.isOpen = true;
         dispatch('slotClicked', {...current, ri, si});
+    }
+
+    const contextmenu = e => {
+        e.preventDefault();
+        current.isFlagged = !current.isFlagged;
+        dispatch('slotRightClicked', {...current, ri, si});
     }
 </script>
 <style>
@@ -21,16 +28,16 @@
 		cursor: pointer;
 	}
 </style>
-{#if !current.isOpen}
-    <td on:mouseup={click} on:mousedown={() => dispatch('slotDown')}>
+{#if !current.isOpen && !current.isFlagged }
+    <td on:mouseup={click} on:mousedown={() => dispatch('slotDown')} on:contextmenu={contextmenu}>
         🤔
     </td>
 {:else}
     <td>
-        {#if current.isBomb}
-            💣
-        {:else if current.isFlagged}
+        {#if current.isFlagged}
             🚩
+        {:else if current.isBomb}
+            💣
         {:else if current.isNearbyBomb}
             {current.numberOfBombsNearby}
         {/if}

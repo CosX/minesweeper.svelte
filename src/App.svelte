@@ -3,14 +3,16 @@
 	import { 
 		createMinesweeperBoard,
 		crawlOpenSlots,
-		reveal 
+		reveal
 	} from './game';
+	import settings from './settings';
 
 	export let board = createMinesweeperBoard();
 	export let gameOver = false;
 	export let suspense = false;
+	export let flagsPlaced = 0;
 
-	function slotClicked(event) {
+	const slotClicked = event => {
 		const slotClicked = event.detail;
 		suspense = false;
 		if (slotClicked.isOpen && !slotClicked.isNearbyBomb && !slotClicked.isBomb){
@@ -22,13 +24,19 @@
 		}
 	}
 
-	function slotDown() {
+	const slotRightClicked = () => {
+		suspense = false;
+		flagsPlaced++;
+	}
+
+	const slotDown = () => {
 		suspense = true;
 	}
 
-	function resetGame() {
+	const resetGame = () => {
 		board = createMinesweeperBoard();
 		gameOver = false;
+		flagsPlaced = 0;
 	}
 </script>
 
@@ -45,7 +53,7 @@
 </style>
 
 <div class="middle">
-	<h1>Sveltesweeper</h1>
+	<h1>Sveltesweeper / Minesvelter</h1>
 	<div class="emo">
 		{#if gameOver}
 			😵
@@ -55,14 +63,14 @@
 			😊
 		{/if}
 	</div>
-	
+	<div>{flagsPlaced}/{settings.bombs} 🚩</div>
 
 	<table class="middle">
 		<tbody>
 		{#each board as row, ri}
 			<tr>
 				{#each row as slot, si}
-					<Slot current={slot} ri={ri} si={si} on:slotClicked="{slotClicked}" on:slotDown="{slotDown}" />
+					<Slot current={slot} ri={ri} si={si} on:slotClicked="{slotClicked}" on:slotRightClicked={slotRightClicked} on:slotDown="{slotDown}" />
 				{/each}
 			</tr>
 		{/each}
